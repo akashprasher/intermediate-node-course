@@ -6,13 +6,31 @@ const app= express();
 
 app.use(bodyParser.json());
 
-const user = require("./models/User");
 const User = require('./models/User');
 mongoose.connect('mongodb://localhost/userData');
 
 app.listen(port, ()=>{
 	console.log(`server is listening on port:${port}`)
 })
+
+function sendResponse(res,err,data){
+  if(err) {
+    res.json({
+      success: false,
+      message: err
+    })
+  } else if(!data) {
+    res.json({
+      success: false,
+      message: "No Data found!"
+    })
+  } else {
+    res.json({
+      success: true,
+      data: data
+    })
+  }
+}
 
 // CREATE
 app.post('/users',(req,res)=>{
@@ -22,38 +40,14 @@ app.post('/users',(req,res)=>{
       email:req.body.newData.email,
       password:req.body.newData.password
     },
-    (err,data)=>{
-    if (err){
-      res.json({success: false,message: err})
-    } else if (!data){
-      res.json({success: false,message: "Not Found!"})
-    } else {
-      res.json({success: true,data: data})
-    }
-  })
+    (err,data)=>{sendResponse(res,err,data)}
+    )
 })
 
 app.route('/users/:id')
 // READ
 .get((req,res)=>{
-  User.findById(req.params.id,(err,data) =>{
-    if(err) {
-      res.json({
-        success: false,
-        message: err
-      }) 
-    } else if (!data) {
-      res.json({
-        success: false,
-        message: "Not Found"
-      }) 
-      }else {
-        res.json({
-          success: true,
-          data: data
-        })
-    }
-  })
+  User.findById(req.params.id,(err,data) =>{sendResponse(res,err,data)})
   // User.findById()
 })
 // UPDATE
@@ -68,47 +62,13 @@ app.route('/users/:id')
     {
       new:true
     }, 
-    (err, data)=>{
-      if(err) {
-        res.json({
-          success:false,
-          message:err
-        })
-      } else if (!data) {
-        res.json({
-          success: false,
-          message: "No Data found"
-        })
-      } else {
-        res.json({
-          success: true,
-          message: data
-        }) 
-      }
-    }
+    (err, data)=>{sendResponse(res,err,data)}
   )
 })
 // DELETE
 .delete((req,res)=>{
   User.findByIdAndDelete(
     req.params.id,
-    (err,data)=>{
-      if(err) {
-        res.json({
-          success: false,
-          message: err
-        }) 
-      } else if (!data) {
-        res.json({
-          success: false,
-          message: "No Data found!"
-        })
-      } else {
-        res.json({
-          success: true,
-          message: data
-        })
-      }
-    }
+    (err,data)=>{sendResponse(res,err,data)}
   )
 })
