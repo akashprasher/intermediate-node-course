@@ -26,7 +26,7 @@ app.post('/users',(req,res)=>{
     if (err){
       res.json({success: false,message: err})
     } else if (!data){
-      res.json({success: false,message: "Not Found"})
+      res.json({success: false,message: "Not Found!"})
     } else {
       res.json({success: true,data: data})
     }
