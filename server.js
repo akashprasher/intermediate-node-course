@@ -16,7 +16,6 @@ app.listen(port, ()=>{
 
 // CREATE
 app.post('/users',(req,res)=>{
-  // User.create()
   User.create(
     {
       name:req.body.newData.name,
